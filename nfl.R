@@ -9,29 +9,23 @@ plays <- read.csv(file = "plays.csv", sep= ",")
 hallOfFame <- read.csv(file = "hallOfFame.csv", sep= ";")
 superBowl <- read.csv(file = "Super_Bowl.csv", sep= ",")
 
-hallOfFame$Player <- as.character(hallOfFame$Player)
-
-
-for (i in 1:nrow(hallOfFame)) {
-  x <- strsplit(as.character(hallOfFame$Player[i]), "\\\\")[[1]]
-  hallOfFame$Player[i] <- x[1]
-}
-
 
 #separate in two dataframes, only with qb's
 qb <- draft$position == 'QB'
 qb <- draft[qb,]
-x <- unique(qb$draftTeam)
 
-qbUnique <- unique(qb["nameFull"])
+qbUnique <- (unique(qb["draftTeam"]))
+qbUnique
 
 #separate in two dataframes, only with qb's
+hallOfFame$Player <- as.character(hallOfFame$Player)
+
 qbFame <- hallOfFame$Pos == 'QB'
 qbFame <- hallOfFame[qbFame,]
 
 for (i in 1:nrow(qbFame)) {
-  x <- strsplit(as.character(qbFame$Player[i]), "\\\\")[[1]]
-  qbFame$Player[i] <- x[1]
+  aux <- strsplit(as.character(qbFame$Player[i]), "\\\\")[[1]]
+  qbFame$Player[i] <- aux[1]
 }
 
 colnames(qbFame)[2] <- "nameFull" 
@@ -45,14 +39,29 @@ total <- unique(total["nameFull"])
 length(total)
 
 #Create the dataframe to make a relactioship between draft qb and superbolw qbs
-intersect(qb$nameFull, superBowl$QB..Winner)
-colnames(superBowl)[4] <- "nameFull" 
+superBowl <- read.csv(file = "Super_Bowl.csv", sep= ",")
 
-y <- unique(superBowl$Winner)
+
+for (i in 1:nrow(superBowl)) {
+  aux <- strsplit(as.character(superBowl$Date[i]), "-")[[1]]
+  superBowl$Year[i] <- as.integer(aux[3])
+}
+
+
+superBowl <- superBowl[, c(1, 24, 2:23)]
+
+
+superBowlYear <- (superBowl$Year >= 77 | superBowl$Year <= 18)
+superBowl <- superBowl[superBowlYear,]
+
+
+intersect(qb$nameFull, superBowl$QB..Winner)
+colnames(superBowl)[5] <- "nameFull" 
+
 
 total <- merge(superBowl, qb, by="nameFull")
 
-total <- total[, c(1:6, 29 )]
+total <- total[, c(1, 26:28, 30, 2:4, 7)]
 
 total$nameFull <- as.character(total$nameFull)
 
@@ -64,3 +73,49 @@ table(unique(total["nameFull"]))
 total$Winner
 
 hist(qb$round)
+
+
+
+####### Teams Name #####
+SD = San Diego Chargers
+SL = Los Angeles Rams
+LA = Los Angeles Rams
+BLT = Baltimore Ravens
+LAR = Los Angeles Rams
+HST = Houston Texans
+ARI = Arizona Cardinals
+LAC = Los Angeles Chargers
+BAL = Baltimore Ravens
+ARZ = Arizona Cardinals
+MIN = Minnesota Vikings
+DAL = Dallas Cowboys
+BUF = Buffalo Bills
+NYG = New York Giants
+PIT = Pittsburgh Steelers
+CHI = Chicago Bears
+CIN = Cincinnati Bengals
+TB = Tampa Bay Buccaneers
+GB = Green Bay Packers
+NYJ = New York Jets
+DET = Detroit Lions
+SEA = Seattle Seahawks
+KC = Kansas City Chiefs
+PHI = Philadelphia Eagles
+NE = New England Patriots
+MIA = Miami Dolphins
+CLV = Cleveland Browns
+HO = Tennessee Titans
+NO = New Orleans Saints
+WAS = Washington Redskins
+SF = San Francisco 49ers
+DEN = Denver Broncos
+ATL = Atlanta Falcons
+OAK = Oakland Raiders
+IND = Indianapolis Colts
+ARZ = Arizona Cardinals
+CAR = Carolina Panthers
+JAX = Jacksonville Jaguars
+TEN = Tennessee Titans
+
+
+
